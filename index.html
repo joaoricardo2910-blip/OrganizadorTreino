@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Organizador de Treino</title>
+  <style>
+    :root{--bg:#0f1724;--bg2:#061722;--card:#0b1220;--muted:#9aa4b2;--text:#e6eef6;--accent:#61dafb;--border:rgba(255,255,255,0.15)}
+    [data-theme="light"]{--bg:#f4f6fa;--bg2:#e9edf3;--card:#ffffff;--muted:#5b677a;--text:#0b1220;--accent:#2563eb;--border:#c7cfdd}
+    [data-theme="dark"]{--bg:#050505;--bg2:#0b0b0b;--card:#111111;--muted:#a1a1aa;--text:#f5f5f5;--accent:#38bdf8;--border:#2a2a2a}
+    *{box-sizing:border-box}
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial;margin:0;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);min-height:100vh}
+    header{padding:14px 18px;background:transparent}
+    h1{font-size:20px;margin:0}
+    .tabs{display:flex;gap:8px;padding:0 18px;margin-top:8px}
+    .tab{padding:8px 12px;border-radius:8px;cursor:pointer;background:rgba(0,0,0,0.06);color:var(--text);border:1px solid var(--border)}
+    .tab.active{background:var(--accent);color:#031022;font-weight:600}
+    .container{padding:18px}
+    .card{background:var(--card);padding:12px;border-radius:10px;border:1px solid var(--border)}
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+    input,select,textarea{width:100%;padding:6px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text)}
+    select option{color:var(--text);background:var(--card)}
+    button{background:var(--accent);border:none;padding:6px 10px;border-radius:8px;color:#031022;cursor:pointer}
+    [data-theme="dark"] button,[data-theme="light"] button{color:white}
+    .flex{display:flex;gap:8px;align-items:center}
+    .hidden{display:none}
+    .small{font-size:13px;color:var(--muted)}
+    .calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+    .day{padding:8px;border-radius:8px;background:rgba(0,0,0,0.05);cursor:pointer;min-height:70px}
+    .day.done{outline:3px solid rgba(80,200,120,.4)}
+    .badge{font-size:12px;margin-top:6px;display:inline-block}
+    dialog{border:none;border-radius:10px;padding:12px;max-width:520px;width:95%;background:var(--card);color:var(--text)}
+    dialog::backdrop{background:rgba(0,0,0,.6)}
+    input[type="number"]{width:70px}
+
+    /* checklist do treino */
+    .workout-check{transition:background .2s,color .2s,opacity .2s}
+    .workout-check.done{background:var(--accent);color:#031022;opacity:1}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Organizador de Treino</h1>
+  </header>
+
+  <div class="tabs" id="tabs"></div>
+
+  <main class="container">
+    <section id="tab-treinos" class="card">
+      <h2>Treinos</h2>
+      <div class="flex" style="gap:10px;align-items:center">
+        <label style="margin:0">Ciclo</label>
+        <select id="cycleCount"><option value="2">A & B</option><option value="3">A, B & C</option></select>
+        <label style="margin:0">Início</label>
+        <input id="startDate" type="date" />
+      </div>
+
+      <div id="workoutTabs" class="flex" style="margin-top:10px"></div>
+      <div id="workoutView" style="margin-top:10px"></div>
+
+      <hr style="margin:12px 0;border-color:var(--border)">
+      <div class="flex" style="align-items:center">
+        <input id="trainDate" type="date" />
+        <button id="saveToday">Registrar treino neste dia</button>
+      </div>
+    </section>
+
+    <section id="tab-exercicios" class="card hidden" style="margin-top:12px">
+      <h2>Exercícios</h2>
+      <div class="flex">
+        <input id="newExName" placeholder="Nome do exercício" />
+        <button id="addExercise">Adicionar</button>
+      </div>
+      <ul id="exerciseList" style="margin-top:10px"></ul>
+    </section>
+
+    <section id="tab-calendario" class="card hidden" style="margin-top:12px">
+      <h2>Calendário</h2>
+      <div class="flex" style="justify-content:space-between;align-items:center">
+        <div>
+          <button id="prevMonth">◀</button>
+          <button id="nextMonth">▶</button>
+        </div>
+        <div class="small">Hoje: <strong id="todayWorkout">—</strong></div>
+      </div>
+      <div id="monthLabel" class="small" style="margin-top:6px"></div>
+      <div id="calendar" style="margin-top:8px"></div>
+    </section>
+
+    <section id="tab-opcoes" class="card hidden" style="margin-top:12px">
+      <h2>Opções</h2>
+      <h3>Tema</h3>
+      <div class="flex">
+        <select id="themeSelect">
+          <option value="blue">Azul escuro</option>
+          <option value="dark">Escuro (preto)</option>
+          <option value="light">Claro</option>
+        </select>
+      </div>
+
+      <h3 style="margin-top:14px">Exportar</h3>
+      <button id="exportJson">Exportar JSON</button>
+      <button id="exportText">Exportar TEXTO</button>
+
+      <h3 style="margin-top:12px">Importar</h3>
+      <button id="importJson">Importar JSON</button>
+      <button id="importText">Importar TEXTO</button>
+      <input id="importFile" type="file" accept="application/json" class="hidden" />
+
+      <h3 style="margin-top:12px;color:#ffb4b4">Zona de risco</h3>
+      <button id="clearAll" style="background:#ff6b6b;color:#240000">Limpar todos os dados</button>
+    </section>
+  </main>
+
+  <dialog id="dayDialog"></dialog>
+  <dialog id="doWorkoutDialog"></dialog>
+  <dialog id="textDialog">
+    <h3>Importar / Exportar TEXTO</h3>
+    <textarea id="textArea" style="width:100%;height:160px"></textarea>
+    <div class="flex" style="justify-content:flex-end;margin-top:8px">
+      <button id="cancelText">Cancelar</button>
+      <button id="applyText">Aplicar</button>
+    </div>
+  </dialog>
+
+  <script>
+    window.onerror = function(msg, url, line, col, err){
+      console.error('Erro global',msg,url,line,col,err);
+      alert('Ocorreu um erro no app — abra o console para detalhes.');
+      return true;
+    }
+
+    document.addEventListener('DOMContentLoaded',()=>{
+      const KEY='treino_pwa_v1';
+      const THEME_KEY='treino_pwa_theme';
+
+      function def(){return {exercises:[],workouts:{A:[],B:[],C:[]},cycle:['A','B'],startDate:new Date().toISOString().slice(0,10),sessions:{}}}
+      let state=JSON.parse(localStorage.getItem(KEY)||'null')||def();
+      const save = ()=>localStorage.setItem(KEY,JSON.stringify(state));
+
+      const tabsContainer=document.getElementById('tabs');
+      const tabs=[{id:'treinos',label:'Treinos'},{id:'exercicios',label:'Exercícios'},{id:'calendario',label:'Calendário'},{id:'opcoes',label:'Opções'}];
+
+      tabs.forEach(t=>{
+        const el=document.createElement('div'); el.className='tab'; el.dataset.tab=t.id; el.textContent=t.label;
+        el.addEventListener('click',()=>{
+          document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+          document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));
+          el.classList.add('active'); document.getElementById('tab-'+t.id).classList.remove('hidden');
+        });
+        tabsContainer.appendChild(el);
+      });
+      document.querySelector('.tab').classList.add('active');
+
+      const cycleCount=document.getElementById('cycleCount');
+      const startDate=document.getElementById('startDate');
+      const workoutTabs=document.getElementById('workoutTabs');
+      const workoutView=document.getElementById('workoutView');
+      const trainDate=document.getElementById('trainDate');
+      const saveToday=document.getElementById('saveToday');
+      const newExName=document.getElementById('newExName');
+      const addExercise=document.getElementById('addExercise');
+      const exerciseList=document.getElementById('exerciseList');
+      const prevMonth=document.getElementById('prevMonth');
+      const nextMonth=document.getElementById('nextMonth');
+      const calendar=document.getElementById('calendar');
+      const monthLabel=document.getElementById('monthLabel');
+      const todayWorkout=document.getElementById('todayWorkout');
+      const exportJson=document.getElementById('exportJson');
+      const exportText=document.getElementById('exportText');
+      const importJson=document.getElementById('importJson');
+      const importText=document.getElementById('importText');
+      const importFile=document.getElementById('importFile');
+      const textDialog=document.getElementById('textDialog');
+      const textArea=document.getElementById('textArea');
+      const cancelText=document.getElementById('cancelText');
+      const applyText=document.getElementById('applyText');
+      const clearAll=document.getElementById('clearAll');
+      const themeSelect=document.getElementById('themeSelect');
+      const dayDialog=document.getElementById('dayDialog');
+      const doWorkoutDialog=document.getElementById('doWorkoutDialog');
+
+      cycleCount.value = state.cycle.length;
+      startDate.value = state.startDate;
+      trainDate.value = new Date().toISOString().slice(0,10);
+
+      function applyTheme(t){
+        if(t==='light') document.documentElement.setAttribute('data-theme','light');
+        else if(t==='dark') document.documentElement.setAttribute('data-theme','dark');
+        else document.documentElement.removeAttribute('data-theme');
+      }
+      themeSelect.value = localStorage.getItem(THEME_KEY)||'blue';
+      applyTheme(themeSelect.value);
+      themeSelect.addEventListener('change',()=>{localStorage.setItem(THEME_KEY,themeSelect.value);applyTheme(themeSelect.value)});
+
+      function uid(){return Date.now()+Math.floor(Math.random()*999)}
+      function saveAndRerender(){save(); renderAll()}
+
+      addExercise.addEventListener('click',()=>{
+        const n=newExName.value.trim(); if(!n) return;
+        state.exercises.push({id:uid(),name:n}); newExName.value=''; saveAndRerender();
+      });
+
+      function renderExercises(){
+        exerciseList.innerHTML='';
+        state.exercises.forEach(ex=>{
+          const li=document.createElement('li'); li.className='flex';
+          const inp=document.createElement('input'); inp.value=ex.name;
+          inp.addEventListener('change',()=>{
+            ex.name=inp.value;
+            Object.values(state.workouts).forEach(w=>w.forEach(x=>{if(x.id===ex.id) x.name=ex.name}));
+            saveAndRerender();
+          });
+          const del=document.createElement('button'); del.textContent='✖';
+          del.addEventListener('click',()=>{
+            if(confirm('Remover exercício? Isso também o removerá dos treinos.')){
+              state.exercises=state.exercises.filter(e=>e.id!==ex.id);
+              Object.values(state.workouts).forEach(w=>{for(let i=w.length-1;i>=0;i--) if(w[i].id===ex.id) w.splice(i,1)});
+              saveAndRerender();
+            }
+          });
+          li.append(inp,del); exerciseList.appendChild(li);
+        });
+      }
+
+      let currentWorkout = state.cycle[0];
+      function renderWorkoutTabs(){
+        workoutTabs.innerHTML='';
+        state.cycle.forEach(l=>{
+          const b=document.createElement('button'); b.textContent=l;
+          b.style.opacity=(l===currentWorkout?1:0.6);
+          b.addEventListener('click',()=>{currentWorkout=l; renderWorkoutTabs(); renderWorkoutView();});
+          workoutTabs.appendChild(b);
+        });
+      }
+
+      function renderWorkoutView(){
+        workoutView.innerHTML=''; const list = state.workouts[currentWorkout] || [];
+        list.forEach((ex,idx)=>{
+          const card=document.createElement('div'); card.className='card'; card.style.marginBottom='8px';
+          const row=document.createElement('div'); row.className='flex'; row.style.justifyContent='space-between';
+          const name=document.createElement('div'); name.innerHTML=`<strong>${ex.name}</strong>`;
+          const inputs=document.createElement('div'); inputs.className='flex';
+          const sets=document.createElement('input'); sets.type='number'; sets.value=ex.sets; sets.placeholder='Séries';
+          const reps=document.createElement('input'); reps.type='number'; reps.value=ex.reps; reps.placeholder='Reps';
+          const weight=document.createElement('input'); weight.placeholder='kg'; weight.value=ex.weight||'';
+          sets.addEventListener('change',()=>{ex.sets=+sets.value; save()});
+          reps.addEventListener('change',()=>{ex.reps=+reps.value; save()});
+          weight.addEventListener('change',()=>{ex.weight=weight.value; save()});
+          const del=document.createElement('button'); del.textContent='✖';
+          del.addEventListener('click',()=>{if(confirm('Remover deste treino?')){state.workouts[currentWorkout].splice(idx,1); saveAndRerender()}});
+          inputs.append(sets,reps,weight,del);
+          row.append(name,inputs); card.appendChild(row); workoutView.appendChild(card);
+        });
+        const select=document.createElement('select');
+        state.exercises.forEach(e=>{const o=document.createElement('option'); o.value=e.id; o.textContent=e.name; select.appendChild(o)});
+        const addBtn=document.createElement('button'); addBtn.textContent='Adicionar exercício';
+        addBtn.addEventListener('click',()=>{
+          const id=select.value; const ex=state.exercises.find(x=>x.id==id);
+          if(!ex){alert('Nenhum exercício disponível. Cadastre um primeiro.'); return;}
+          state.workouts[currentWorkout]=state.workouts[currentWorkout]||[];
+          state.workouts[currentWorkout].push({id:ex.id,name:ex.name,sets:3,reps:8,weight:''});
+          saveAndRerender();
+        });
+        workoutView.append(select,addBtn);
+        const doBtn=document.createElement('button'); doBtn.textContent='Realizar esse treino'; doBtn.style.marginTop='10px';
+        doBtn.addEventListener('click',openDoWorkout); workoutView.appendChild(doBtn);
+      }
+
+      function saveSession(date, workout){
+        state.sessions[date] = { workout, exercises: JSON.parse(JSON.stringify(state.workouts[workout]||[])) };
+        saveAndRerender();
+      }
+      saveToday.addEventListener('click',()=>{
+        const d = trainDate.value || new Date().toISOString().slice(0,10);
+        saveSession(d,currentWorkout); alert('Treino registrado em '+d);
+      });
+
+      let view = new Date();
+      function planned(d){ const s = new Date(state.startDate); const x = new Date(d); const k = Math.floor((x - s) / 86400000); return state.cycle[((k % state.cycle.length)+state.cycle.length)%state.cycle.length] }
+      function renderCalendar(){
+        monthLabel.textContent = view.toLocaleString('pt-BR',{month:'long',year:'numeric'});
+        calendar.innerHTML=''; calendar.className='calendar';
+        const y=view.getFullYear(), m=view.getMonth();
+        const first=new Date(y,m,1).getDay(); const days=new Date(y,m+1,0).getDate();
+        for(let i=0;i<first;i++) calendar.appendChild(document.createElement('div'));
+        for(let d=1;d<=days;d++){
+          const iso=new Date(y,m,d).toISOString().slice(0,10);
+          const cell=document.createElement('div'); cell.className='day'; cell.innerHTML=`<div>${d}</div>`;
+          if(state.sessions[iso]){ cell.classList.add('done'); cell.innerHTML+=`<div class='badge'>${state.sessions[iso].workout}</div>` }
+          else { const p=planned(iso); cell.innerHTML+=`<div class='small'>→ ${p}</div>` }
+          cell.addEventListener('click',()=>openDay(iso)); calendar.appendChild(cell);
+        }
+        todayWorkout.textContent = 'Treino ' + planned(new Date().toISOString().slice(0,10));
+      }
+
+      function openDoWorkout(){
+        const list = state.workouts[currentWorkout] || [];
+        let html = `<h3>Treino ${currentWorkout}</h3>`;
+        html += `<p class='small'>Toque nos exercícios para marcar como feito</p>`;
+        list.forEach((e,i)=>{
+          html += `<div class='card workout-check' data-i='${i}' style='margin-bottom:8px;cursor:pointer'>
+            <strong>${e.name}</strong><br>
+            <span class='small'>${e.sets} × ${e.reps} ${e.weight ? `— ${e.weight} kg` : ''}</span>
+          </div>`;
+        });
+        html += `<div style='margin-top:12px'><button onclick=\"this.closest('dialog').close()\">Fechar</button></div>`;
+        doWorkoutDialog.innerHTML = html; doWorkoutDialog.showModal();
+        Array.from(doWorkoutDialog.querySelectorAll('.workout-check')).forEach(el=>{
+          el.addEventListener('click',()=>el.classList.toggle('done'));
+        });
+      }
+
+      function openDay(d){
+        const s = state.sessions[d]; let h = `<h3>${d}</h3>`;
+        if(!s){ h += '<p>Sem treino registrado.</p>'; }
+        else{ h += `<p>Treino ${s.workout}</p>`; s.exercises.forEach(e=>h+=`<div>${e.name} — ${e.sets}x${e.reps} ${e.weight||''}</div>`); }
+        h += `<div style='margin-top:10px'><button onclick=\"this.closest('dialog').close()\">Fechar</button></div>`;
+        dayDialog.innerHTML = h; dayDialog.showModal();
+      }
+
+      prevMonth.addEventListener('click',()=>{ view.setMonth(view.getMonth()-1); renderCalendar() });
+      nextMonth.addEventListener('click',()=>{ view.setMonth(view.getMonth()+1); renderCalendar() });
+
+      exportJson.addEventListener('click',()=>{
+        const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+        const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='treino.json'; a.click(); URL.revokeObjectURL(a.href);
+      });
+      exportText.addEventListener('click',()=>{ textArea.value = btoa(unescape(encodeURIComponent(JSON.stringify(state)))); textDialog.showModal(); });
+      importJson.addEventListener('click',()=>importFile.click());
+      importFile.addEventListener('change',(e)=>{
+        const f=e.target.files[0]; if(!f) return; const r=new FileReader();
+        r.onload=()=>{ try{ state=JSON.parse(r.result); save(); renderAll(); alert('Importado com sucesso'); }catch{alert('JSON inválido')} };
+        r.readAsText(f);
+      });
+      importText.addEventListener('click',()=>{ textArea.value=''; textDialog.showModal(); });
+      cancelText.addEventListener('click',()=>textDialog.close());
+      applyText.addEventListener('click',()=>{
+        try{ state=JSON.parse(decodeURIComponent(escape(atob(textArea.value.trim())))); save(); renderAll(); textDialog.close(); alert('Importado com sucesso'); }
+        catch{ alert('Texto inválido') }
+      });
+
+      clearAll.addEventListener('click',()=>{
+        if(confirm('Tem certeza que deseja apagar todos os dados?')){ localStorage.removeItem(KEY); state=def(); save(); renderAll(); alert('Dados apagados'); }
+      });
+
+      function renderAll(){ renderExercises(); renderWorkoutTabs(); renderWorkoutView(); renderCalendar(); }
+      renderAll();
+      document.querySelector('.tab[data-tab="treinos"]').classList.add('active'); document.getElementById('tab-treinos').classList.remove('hidden');
+    });
+  </script>
+</body>
+</html>

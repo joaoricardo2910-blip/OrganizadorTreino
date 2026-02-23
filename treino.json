@@ -1,0 +1,237 @@
+{
+  "exercises": [
+    {
+      "id": 1769188436326.66,
+      "name": "Cadeira Extensora (02)"
+    },
+    {
+      "id": 1769188443547.57,
+      "name": "Puxada LetPull (38)"
+    },
+    {
+      "id": 1769188451168.768,
+      "name": "Leg Horizontal (08)"
+    },
+    {
+      "id": 1769188459328.8428,
+      "name": "Remada Apoiada (S) (37)"
+    },
+    {
+      "id": 1769188466798.2844,
+      "name": "Sentar e Lev. Banco"
+    },
+    {
+      "id": 1769188471452.7495,
+      "name": "Biceps Halter"
+    },
+    {
+      "id": 1769188478460.1077,
+      "name": "Cadeira Adutora (10)"
+    },
+    {
+      "id": 1769188484521.833,
+      "name": "Abdominal Supra"
+    },
+    {
+      "id": 1769188497855.1208,
+      "name": "Cadeira Flexora (18)"
+    },
+    {
+      "id": 1769188508017.6804,
+      "name": "Supino Máquina (28)"
+    },
+    {
+      "id": 1769188517761.1145,
+      "name": "Mesa Flexora (17)"
+    },
+    {
+      "id": 1769188526674.4504,
+      "name": "Hammer 30° (30)"
+    },
+    {
+      "id": 1769188539642.2625,
+      "name": "Triceps Pulley (P) CROSS"
+    },
+    {
+      "id": 1769188553038.6409,
+      "name": "Elevação Lateral HBC"
+    },
+    {
+      "id": 1769188563716.3274,
+      "name": "Cadeira Abdutora (12)"
+    },
+    {
+      "id": 1769188569776.3945,
+      "name": "Panturrilha Livre"
+    }
+  ],
+  "workouts": {
+    "A": [
+      {
+        "id": 1769188436326.66,
+        "name": "Cadeira Extensora (02)",
+        "sets": 3,
+        "reps": "12",
+        "weight": "35"
+      },
+      {
+        "id": 1769188443547.57,
+        "name": "Puxada LetPull (38)",
+        "sets": 3,
+        "reps": 10,
+        "weight": ""
+      },
+      {
+        "id": 1769188451168.768,
+        "name": "Leg Horizontal (08)",
+        "sets": 3,
+        "reps": 10,
+        "weight": ""
+      },
+      {
+        "id": 1769188459328.8428,
+        "name": "Remada Apoiada (S) (37)",
+        "sets": 3,
+        "reps": 10,
+        "weight": ""
+      },
+      {
+        "id": 1769188466798.2844,
+        "name": "Sentar e Lev. Banco",
+        "sets": 3,
+        "reps": 12,
+        "weight": ""
+      },
+      {
+        "id": 1769188471452.7495,
+        "name": "Biceps Halter",
+        "sets": 3,
+        "reps": 10,
+        "weight": ""
+      },
+      {
+        "id": 1769188478460.1077,
+        "name": "Cadeira Adutora (10)",
+        "sets": 3,
+        "reps": 15,
+        "weight": ""
+      },
+      {
+        "id": 1769188484521.833,
+        "name": "Abdominal Supra",
+        "sets": 3,
+        "reps": 10,
+        "weight": ""
+      }
+    ],
+    "B": [
+      {
+        "id": 1769188497855.1208,
+        "name": "Cadeira Flexora (18)",
+        "sets": 3,
+        "reps": 12,
+        "weight": "0"
+      },
+      {
+        "id": 1769188508017.6804,
+        "name": "Supino Máquina (28)",
+        "sets": 3,
+        "reps": 10,
+        "weight": "0"
+      },
+      {
+        "id": 1769188517761.1145,
+        "name": "Mesa Flexora (17)",
+        "sets": 3,
+        "reps": 15,
+        "weight": "0"
+      },
+      {
+        "id": 1769188526674.4504,
+        "name": "Hammer 30° (30)",
+        "sets": 3,
+        "reps": 10,
+        "weight": "7,5"
+      },
+      {
+        "id": 1769188539642.2625,
+        "name": "Triceps Pulley (P) CROSS",
+        "sets": 3,
+        "reps": 12,
+        "weight": "25"
+      },
+      {
+        "id": 1769188553038.6409,
+        "name": "Elevação Lateral HBC",
+        "sets": 3,
+        "reps": 10,
+        "weight": "4"
+      },
+      {
+        "id": 1769188563716.3274,
+        "name": "Cadeira Abdutora (12)",
+        "sets": 3,
+        "reps": 15,
+        "weight": "0"
+      },
+      {
+        "id": 1769188569776.3945,
+        "name": "Panturrilha Livre",
+        "sets": 3,
+        "reps": 10,
+        "weight": ""
+      }
+    ],
+    "C": []
+  },
+  "cycle": [
+    "A",
+    "B"
+  ],
+  "startDate": "2026-01-25",
+  "sessions": {
+    "2026-01-21": {
+      "workout": "A",
+      "exercises": [
+        {
+          "id": 1769188436326.66,
+          "name": "Cadeira Extensora (02)",
+          "sets": 3,
+          "reps": "12",
+          "weight": "35"
+        },
+        {
+          "id": 1769188443547.57,
+          "name": "Puxada LetPull (38)",
+          "sets": 3,
+          "reps": 8,
+          "weight": ""
+        }
+      ]
+    },
+    "2026-01-23": {
+      "workout": "B",
+      "exercises": [
+        {
+          "id": 1769188497855.1208,
+          "name": "Cadeira Flexora (18)",
+          "sets": 3,
+          "reps": "12",
+          "weight": "40"
+        }
+      ]
+    },
+    "2026-01-24": {
+      "workout": "B",
+      "exercises": [
+        {
+          "id": 1769188497855.1208,
+          "name": "Cadeira Flexora (18)",
+          "sets": 3,
+          "reps": "12",
+          "weight": "35"
+        }
+      ]
+    }
+  }
+}
